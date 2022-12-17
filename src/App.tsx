@@ -1,10 +1,12 @@
 import './App.css';
-import Polygon from './components/Polygon';
+import Intro from './components/Intro';
+import { Transfer } from './components/Transfer';
 
 function App() {
   return (
     <div className="App">
-      <Polygon />
+      <Intro />
+      <Transfer />
     </div>
   );
 }

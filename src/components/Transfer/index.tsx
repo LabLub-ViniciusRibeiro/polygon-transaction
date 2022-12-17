@@ -1,29 +1,15 @@
 import { useState, useEffect } from 'react'
-import { connect } from './connect';
 import { ethers } from 'ethers'
 
 declare let window: {
     ethereum: ethers.providers.ExternalProvider
 }
 
-export function Polygon() {
+export function Transfer() {
 
-    const [address, setAddress] = useState<string>('');
-    const [errorConnectingToProvider, setErrorConnectingToProvider] = useState<{ error: unknown }>();
     const [inputValue, setInputValue] = useState<string>("")
     const [inputAddress, setInputAddress] = useState<string>("")
 
-    useEffect(() => {
-        connectToProvider();
-        async function connectToProvider() {
-            const address = await connect();
-            if (typeof address === 'string') {
-                setAddress(address);
-            } else {
-                setErrorConnectingToProvider(address);
-            }
-        }
-    }, []);
 
     async function transfer() {
         try {
@@ -52,15 +38,14 @@ export function Polygon() {
     }
 
     return (
-        <div>
-            <h1>Account selected address: {address}</h1>
-            <form>
-                <input type="text" onChange={(event) => setInputValue(event.target.value)} value={inputValue} />
-                <input type="number" onChange={(event) => setInputAddress(event.target.value)} value={inputAddress} />
-                <button onClick={transfer}>Send</button>
-            </form>
-        </div>
+        <form>
+            <label>To</label>
+            <input type="text" onChange={(event) => setInputAddress(event.target.value)} value={inputAddress} />
+            <label>Amount</label>
+            <input type="number" onChange={(event) => setInputValue(event.target.value)} value={inputValue} />
+            <button onClick={transfer}>Send</button>
+        </form>
     );
 }
 
-export default Polygon;
+export default Transfer;
