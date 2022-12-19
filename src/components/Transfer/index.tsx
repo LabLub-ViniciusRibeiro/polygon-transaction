@@ -1,5 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { ethers } from 'ethers'
+import Input from '../UI/Input'
+import { TransferWrapper } from './styles'
+import Button from '../UI/Button'
 
 declare let window: {
     ethereum: ethers.providers.ExternalProvider
@@ -9,9 +12,12 @@ export function Transfer() {
 
     const [inputValue, setInputValue] = useState<string>("")
     const [inputAddress, setInputAddress] = useState<string>("")
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
 
-    async function transfer() {
+    async function transfer(event: React.FormEvent) {
+        event.preventDefault();
+        setIsLoading(true);
         try {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const send_account = await provider.getSigner().getAddress();
@@ -29,22 +35,26 @@ export function Transfer() {
             }
             const hash = await provider.getSigner().sendTransaction(transaction);
             const receipt = await hash.wait();
+            setInputAddress("");
+            setInputValue("");
             return { hash: receipt.transactionHash };
         } catch (error) {
             return {
                 error: (error as any).message,
             };
+        } finally {
+            setIsLoading(false);
         }
     }
 
+    const isDisabled = (inputAddress.length===0 || inputValue.length===0) ? true : false
+
     return (
-        <form>
-            <label>To</label>
-            <input type="text" onChange={(event) => setInputAddress(event.target.value)} value={inputAddress} />
-            <label>Amount</label>
-            <input type="number" onChange={(event) => setInputValue(event.target.value)} value={inputValue} />
-            <button onClick={transfer}>Send</button>
-        </form>
+        <TransferWrapper onSubmit={transfer}>
+            <Input label='To' onChange={(event) => setInputAddress(event.target.value)} value={inputAddress} />
+            <Input label='Amount' type="number" onChange={(event) => setInputValue(event.target.value)} value={inputValue} />
+            <Button title="Send" isLoading={isLoading} type="submit" disabled={isDisabled}/>
+        </TransferWrapper>
     );
 }
 
