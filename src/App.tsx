@@ -1,4 +1,5 @@
 import './App.css';
+import History from './components/History';
 import Intro from './components/Intro';
 import { Transfer } from './components/Transfer';
 
@@ -7,6 +8,7 @@ function App() {
     <div className="App">
       <Intro />
       <Transfer />
+      <History />
     </div>
   );
 }
